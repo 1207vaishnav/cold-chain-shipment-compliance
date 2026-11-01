@@ -1,70 +1,282 @@
 # Cold-Chain Shipment Compliance Synthetic Data Project
 
-## Objective
-Generate a reproducible synthetic dataset and evaluate whether temperature-sensitive shipments remained within product and route requirements. The solution exposes exceptions, preserves traceability and produces measurable compliance outcomes.
+## 1. Objective
 
-## Environment and dependencies
-Python 3.10+; Python standard library only. SQLite is used for persistence. No external package installation is required.
+Generate a reproducible synthetic dataset and evaluate whether temperature-sensitive shipments remained within product and route requirements.
 
-## Run the complete default dataset
-From this folder:
+The solution identifies temperature excursions, exposes operational exceptions, preserves shipment traceability and produces measurable compliance outcomes.
+
+## 2. Environment and Dependencies
+
+- Python 3.10+
+- SQLite
+- Python standard library
+- No external Python packages required
+
+## 3. Project Setup
+
+Clone the repository:
+
+```bash
+git clone https://github.com/1207vaishnav/cold-chain-shipment-compliance.git
+cd cold-chain-shipment-compliance
+```
+
+No package installation is required for the current implementation.
+
+## 4. Run the Complete Dataset
+
+Execute the complete workflow:
+
 ```bash
 python main.py
 ```
-Default scale: 5,000 shipments, 1,000 physical loggers, 10-minute sampling, 349 expected readings per 58-hour shipment. Seed: `20261022`.
 
-## Starter dataset
-The same generator supports a smaller scale:
+Default configuration:
+
+| Parameter | Value |
+|---|---:|
+| Shipments | 5,000 |
+| Physical loggers | 1,000 |
+| Temperature sampling interval | 10 minutes |
+| Shipment duration | 58 hours |
+| Expected baseline readings | 1,745,000 |
+| Random seed | 20261022 |
+
+The generator intentionally omits one scheduled temperature reading as a controlled missing-data anomaly. Therefore, the full dataset contains 1,744,999 actual readings.
+
+You can also specify the configuration:
+
 ```bash
-python data_generator.py --shipments 100 --loggers 25 --db starter.db
+python main.py --shipments 5000 --loggers 1000 --seed 20261022 --db cold_chain.db
 ```
-Then run the detectors with the same DB path through Python or set `DATABASE_NAME` in config for the standard workflow. The generator accepts `--shipments`, `--loggers`, `--seed`, `--db`, and `--no-anomalies`.
 
-## Required ID conventions
-- Lot: `LOT-2026-000001`
-- Shipment: `SHP-2026-000001`
-- Physical logger: `LOG-000001`
-- Shipment-specific logger assignment: `LOG-SHP-2026-000001-01`
-- Reading: `TEMP-LOG-000001-20260101080000`
-- Excursion report: `EXCR-2026-000001`
+## 5. Generate a Starter Dataset
 
-The prompt gives a shipment-specific logger naming example while requiring 1,000 logger devices for 5,000 shipments. This implementation keeps 1,000 stable physical logger IDs and uses the shipment-specific pattern for the assignment identifier. This is a documented modelling interpretation to satisfy both instructions.
+For faster testing:
 
-## Data model
-Ten required core entities are implemented, plus `logger_assignments` as the N:M bridge, `shipment_status_history` for lifecycle event history, `anomaly_issues` for labelled controlled exceptions, and `compliance_reports` for outcomes. See `schema.sql` and `data_dictionary.md`.
+```bash
+python main.py --shipments 100 --loggers 25 --seed 20261022 --db starter.db
+```
 
-## Workflow
-1. Create master data (Product, Lot, Shipment, Packaging, Logger).
-2. Create valid assignments, readings, custody events and route stops.
-3. Store policy limits, allowed excursion durations and effective dates.
-4. Inject labelled deviations only after the baseline has been generated.
-5. Calculate shipment-scoped excursion reports and compliance outcomes from evidence.
-6. Validate and export CSV, JSON and SQL.
+The same database path is passed through generation, excursion detection, compliance calculation and validation.
 
-## Required edge cases
-- Logger not assigned to shipment.
+The generator also supports:
+
+- `--shipments`
+- `--loggers`
+- `--seed`
+- `--db`
+- `--no-anomalies`
+
+Use `python main.py --help` to inspect available options.
+
+## 6. Required ID Conventions
+
+| Entity | Example |
+|---|---|
+| Lot | `LOT-2026-000001` |
+| Shipment | `SHP-2026-000001` |
+| Physical logger | `LOG-000001` |
+| Shipment-specific logger assignment | `LOG-SHP-2026-000001-01` |
+| Temperature reading | `TEMP-LOG-000001-20260101080000` |
+| Excursion report | `EXCR-2026-000001` |
+
+**Logger ID interpretation:** The specification provides a shipment-specific logger naming example while requiring 1,000 logger devices for 5,000 shipments. This implementation maintains stable physical logger IDs and uses the shipment-specific naming pattern for assignment identifiers. This preserves logger reuse and shipment-level assignment traceability.
+
+## 7. Data Model and Relationships
+
+The implementation includes ten required core entities:
+
+- Product
+- Lot
+- Shipment
+- Packaging
+- Logger
+- TemperatureReading
+- CustodyEvent
+- RouteStop
+- ThresholdPolicy
+- ExcursionReport
+
+Additional supporting tables:
+
+- `logger_assignments` – connects reusable physical loggers to shipments.
+- `shipment_status_history` – preserves shipment lifecycle events.
+- `anomaly_issues` – records controlled anomalies and expected labels.
+- `compliance_reports` – stores calculated shipment compliance outcomes.
+
+See `schema.sql` for table definitions and `data_dictionary.md` for field-level documentation.
+
+## 8. Data Generation and Processing Workflow
+
+The complete pipeline follows this sequence:
+
+1. Generate master data: products, lots, shipments, packaging and loggers.
+2. Create logger assignments and generate temperature readings.
+3. Record custody handoffs and route stops.
+4. Store product-specific temperature thresholds and allowed excursion durations.
+5. Inject controlled anomalies after baseline generation.
+6. Detect temperature excursions using shipment-scoped evidence.
+7. Calculate shipment compliance outcomes.
+8. Validate relationships, data integrity and derived results.
+9. Export the generated data and validation summary.
+
+Historical state changes are preserved through event records instead of overwriting previous states.
+
+## 9. Controlled Anomalies and Ground Truth
+
+The dataset includes the following deliberate exception scenarios:
+
+- Logger not assigned to the shipment.
 - Product threshold mismatch.
 - Missing scheduled temperature reading.
 - Missing delivery custody event.
-- Cross-shipment excursion aggregation guard. The detector groups by shipment and policy, and each report references first/last evidence readings.
+- Temperature excursion.
+- Cross-shipment excursion aggregation guard.
 
-`anomaly_issues` and `ground_truth.json` hold expected labels separately; the compliance engine does not use those labels as input features.
+Expected anomaly labels are stored separately in `ground_truth.csv`, `ground_truth.json` and the `anomaly_issues` table.
 
-## Calibration uncertainty and route dwell
-Each logger includes calibration date, due date and uncertainty in °C. Raw temperature observations are retained. The problem statement does not specify an uncertainty decision rule, so uncertainty is documented rather than used to alter measured values. Route stops include variable dwell durations, derived from arrival/departure timestamps. For this synthetic example, a maximum dwell threshold of 120 minutes is configured; the problem statement does not prescribe a numerical route dwell limit, so this is an explicit configurable assumption.
+**Ground-truth separation:** These labels are evaluation data. They are not used as input features by the compliance engine to determine shipment outcomes.
 
-## Validation and reproducibility
+The excursion detector groups evidence by shipment and policy to prevent readings from different shipments being combined into one excursion report.
+
+## 10. Calibration Uncertainty and Route Dwell
+
+Each logger includes calibration information, including calibration date, due date and measurement uncertainty in °C.
+
+Raw temperature observations are retained. Since the specification does not prescribe an uncertainty decision rule, uncertainty is documented rather than used to modify measured values.
+
+Route stops contain arrival and departure timestamps. Dwell duration is derived from these timestamps.
+
+A maximum route dwell threshold of 120 minutes is used as a configurable synthetic assumption. This value is not presented as a regulatory requirement.
+
+## 11. Validation
+
+Run the validator:
+
 ```bash
-python excursion_detector.py
-python compliance_engine.py
 python validator.py
-python -m unittest discover -s tests -v
+```
+
+The validation checks include:
+
+- Foreign-key integrity.
+- Primary-key uniqueness.
+- Shipment and lot date consistency.
+- Route dwell duration.
+- Logger assignment date validity.
+- Overlapping logger assignments.
+- Reading-to-assignment relationships.
+- Required delivery custody events.
+- Product and threshold consistency.
+- Excursion evidence and duration consistency.
+- Compliance report coverage.
+- Ground-truth label integrity.
+
+Intentional, labelled anomalies are reported separately from unexpected structural failures.
+
+### Full Dataset Validation Results
+
+The verified full-dataset run produced:
+
+| Validation metric | Result |
+|---|---:|
+| Foreign-key violations | 0 |
+| Duplicate primary keys across all 14 tables | 0 |
+| Invalid lot dates | 0 |
+| Invalid shipment dates | 0 |
+| Invalid route dwell | 0 |
+| Route dwell limit violations | 0 |
+| Logger assignment date errors | 0 |
+| Overlapping logger assignments | 0 |
+| Cross-shipment excursion evidence errors | 0 |
+| Excursion duration mismatches | 0 |
+| Compliance reports generated | 5,000 |
+| Shipments without compliance reports | 0 |
+| Ground-truth issues | 7 |
+| Duplicate anomaly issue IDs | 0 |
+| Invalid ground-truth decisions | 0 |
+
+Three deliberate anomaly categories produce one expected mismatch each: logger assignment, delivery custody and product threshold. They are labelled and distinguished from unexpected failures.
+
+**Overall structural validation: PASS.**
+
+## 12. Tests
+
+Run the automated test suite:
+
+```bash
+python -m pytest -v
+```
+
+The tests cover:
+
+- Small end-to-end dataset generation.
+- Excursion detection and compliance report generation.
+- Baseline generation without injected anomalies.
+- Structural validation.
+- Preventing exports when structural validation fails.
+
+## 13. Reproducibility
+
+Run:
+
+```bash
 python reproducibility.py
 ```
-The reproducibility script regenerates two small databases with the same seed and compares row counts and SHA-256 table checksums.
 
-## Exports
-`exporter.py` exports all database tables to CSV and JSON under `output/`. `sql_exporter.py` creates a SQL seed dump. `source_manifest.json` records synthetic provenance; no external data is used.
+The reproducibility script generates two small databases using the same seed and compares table row counts and SHA-256 checksums.
 
-## Synthetic assumptions and limitations
-Product names, locations, trip duration, packaging profiles, excursion allowances and calibration uncertainty ranges are synthetic assumptions because the specification does not prescribe exact values. No real-world regulatory certification is claimed. External data is not required or used.
+The purpose is to verify that identical configurations produce identical generated database content.
+
+The full dataset uses seed `20261022`.
+
+## 14. Exports
+
+The project supports CSV, JSON and SQL exports.
+
+Run the complete pipeline to generate all exports:
+
+```bash
+python main.py
+```
+
+Individual export commands:
+
+```bash
+python exporter.py
+python sql_exporter.py
+```
+
+Generated files are stored in the `output/` directory:
+
+- CSV exports for all database tables.
+- JSON exports for all database tables.
+- `cold_chain_seed.sql` for database restoration.
+- `validation_summary.json` for validation results.
+
+The SQL export was tested by restoring it into an in-memory SQLite database and checking the restored table and record counts.
+
+## 15. Data Provenance
+
+All generated data is synthetic.
+
+No external shipment, customer, product or temperature data is used. `source_manifest.json` documents the synthetic data provenance.
+
+The fixed random seed supports repeatable dataset generation.
+
+## 16. Assumptions and Limitations
+
+- Product names, locations, trip durations and packaging profiles are synthetic.
+- Temperature thresholds and excursion allowances are configured synthetic policy values.
+- Calibration uncertainty is recorded but does not modify measured temperatures.
+- The 120-minute route dwell limit is a configurable assumption.
+- The dataset is intended for software testing and compliance workflow evaluation.
+- No real-world regulatory certification or production cold-chain validation is claimed.
+
+## 17. Repository
+
+GitHub: https://github.com/1207vaishnav/cold-chain-shipment-compliance
+
+The repository contains the source code, database schema, data dictionary, synthetic ground-truth labels, tests and execution documentation.
