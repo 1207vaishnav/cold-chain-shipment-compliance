@@ -1,0 +1,13 @@
+{
+  "seed": 20261022,
+  "description": "Separate expected labels for controlled synthetic edge cases; not an input feature to compliance decisions.",
+  "issues": [
+    {"issue_id":"ISS-0001","issue_type":"LOGGER_NOT_ASSIGNED_TO_SHIPMENT","expected_decision":"NON_COMPLIANT"},
+    {"issue_id":"ISS-0002","issue_type":"PRODUCT_THRESHOLD_MISMATCH","expected_decision":"NON_COMPLIANT"},
+    {"issue_id":"ISS-0003","issue_type":"MISSING_TEMPERATURE_READING","expected_decision":"INSUFFICIENT_DATA"},
+    {"issue_id":"ISS-0004","issue_type":"CUSTODY_GAP","expected_decision":"NON_COMPLIANT"},
+    {"issue_id":"ISS-0005-4","issue_type":"TEMPERATURE_EXCURSION","expected_decision":"NON_COMPLIANT"},
+    {"issue_id":"ISS-0005-5","issue_type":"TEMPERATURE_EXCURSION","expected_decision":"NON_COMPLIANT"},
+    {"issue_id":"ISS-0006","issue_type":"CROSS_SHIPMENT_EXCURSION_GUARD","expected_decision":"PASS"}
+  ]
+}

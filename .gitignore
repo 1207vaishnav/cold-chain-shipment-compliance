@@ -1,0 +1,83 @@
+
+# =====================================
+# PYTHON CACHE
+# =====================================
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# =====================================
+# VIRTUAL ENVIRONMENTS
+# =====================================
+venv/
+.venv/
+env/
+ENV/
+
+# =====================================
+# DATABASE FILES
+# =====================================
+*.db
+*.sqlite
+*.sqlite3
+
+# =====================================
+# GENERATED DATA AND EXPORTS
+# =====================================
+output/
+
+# =====================================
+# TEMPORARY TEST FILES
+# =====================================
+test_*.db
+*_test.db
+failure_test.db
+*.tmp
+*.log
+
+# =====================================
+# ENVIRONMENT VARIABLES AND SECRETS
+# =====================================
+.env
+.env.*
+!.env.example
+
+# =====================================
+# EDITOR SETTINGS
+# =====================================
+.vscode/
+.idea/
+
+# =====================================
+# OPERATING SYSTEM FILES
+# =====================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =====================================
+# PYTHON BUILD FILES
+# =====================================
+build/
+dist/
+*.egg-info/
+
+# =====================================
+# TEMPORARY VERIFICATION SCRIPTS
+# =====================================
+check_tables.py
+compare_readings.py
+verify_ground_truth.py
+verify_sql.py
+verify_test.py
+
+# =====================================
+# EXECUTION LOGS
+# =====================================
+final_full_run_log.txt
+final_full_run_time.txt
+full_run_log.txt
+full_run_time.txt

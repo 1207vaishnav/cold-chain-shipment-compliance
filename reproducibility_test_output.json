@@ -1,0 +1,95 @@
+{
+  "reproducible": true,
+  "first": {
+    "products": {
+      "rows": 10,
+      "sha256": "692f73afd3866fbfb0fc9e1bb9a96ddbe8d1c7933d643395887ccabfeb262980"
+    },
+    "lots": {
+      "rows": 20,
+      "sha256": "e723d51f8f27b1ccfb4f76fb1f2145be50dc22540658d40eebc4ebb31ac94ce9"
+    },
+    "shipments": {
+      "rows": 20,
+      "sha256": "a68b2653588ab6eafa6bb8d20a379bc2934a49e4f6378e1e7b4940565fb731c6"
+    },
+    "packaging": {
+      "rows": 20,
+      "sha256": "62bded48ff74d97a05aafe131151a1902b1b5ab4fbc8a77358fb372a24d1bf1c"
+    },
+    "loggers": {
+      "rows": 5,
+      "sha256": "c2a5e7967c22af982c0783a560cfb11310d53ceaf6532f89a346fee36e2c09d1"
+    },
+    "logger_assignments": {
+      "rows": 20,
+      "sha256": "72620780a20b497dd5fac7dfdbf4262d51cf61abcb7a90b9694b1b1decc99a6b"
+    },
+    "temperature_readings": {
+      "rows": 6979,
+      "sha256": "53d0fc9f617c716f455ab30b4113bee456240e0657a04ae960102b44e0194917"
+    },
+    "custody_events": {
+      "rows": 59,
+      "sha256": "95c36a9b3774f63bd740dfe7b95f19bea79e018db05c475f706ab5770b304a1d"
+    },
+    "route_stops": {
+      "rows": 40,
+      "sha256": "f5138ad09136628821ea03e85253da8aae91411dd366ecbf67d4935e683cd9a2"
+    },
+    "threshold_policies": {
+      "rows": 10,
+      "sha256": "54e8ad8ad5ea7f2a827737328be053b0cfd152de62f8547e6bdea231fde125d8"
+    },
+    "anomaly_issues": {
+      "rows": 7,
+      "sha256": "87f75380a43d0d82352812496b568c3e698c48d9d7330fa4745a91b1eab1809b"
+    }
+  },
+  "second": {
+    "products": {
+      "rows": 10,
+      "sha256": "692f73afd3866fbfb0fc9e1bb9a96ddbe8d1c7933d643395887ccabfeb262980"
+    },
+    "lots": {
+      "rows": 20,
+      "sha256": "e723d51f8f27b1ccfb4f76fb1f2145be50dc22540658d40eebc4ebb31ac94ce9"
+    },
+    "shipments": {
+      "rows": 20,
+      "sha256": "a68b2653588ab6eafa6bb8d20a379bc2934a49e4f6378e1e7b4940565fb731c6"
+    },
+    "packaging": {
+      "rows": 20,
+      "sha256": "62bded48ff74d97a05aafe131151a1902b1b5ab4fbc8a77358fb372a24d1bf1c"
+    },
+    "loggers": {
+      "rows": 5,
+      "sha256": "c2a5e7967c22af982c0783a560cfb11310d53ceaf6532f89a346fee36e2c09d1"
+    },
+    "logger_assignments": {
+      "rows": 20,
+      "sha256": "72620780a20b497dd5fac7dfdbf4262d51cf61abcb7a90b9694b1b1decc99a6b"
+    },
+    "temperature_readings": {
+      "rows": 6979,
+      "sha256": "53d0fc9f617c716f455ab30b4113bee456240e0657a04ae960102b44e0194917"
+    },
+    "custody_events": {
+      "rows": 59,
+      "sha256": "95c36a9b3774f63bd740dfe7b95f19bea79e018db05c475f706ab5770b304a1d"
+    },
+    "route_stops": {
+      "rows": 40,
+      "sha256": "f5138ad09136628821ea03e85253da8aae91411dd366ecbf67d4935e683cd9a2"
+    },
+    "threshold_policies": {
+      "rows": 10,
+      "sha256": "54e8ad8ad5ea7f2a827737328be053b0cfd152de62f8547e6bdea231fde125d8"
+    },
+    "anomaly_issues": {
+      "rows": 7,
+      "sha256": "87f75380a43d0d82352812496b568c3e698c48d9d7330fa4745a91b1eab1809b"
+    }
+  }
+}
